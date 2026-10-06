@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="global-error-handling-implError_Handler" doc:id="bccbe3b2-be6a-48f8-bd32-c4f909709915" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ec10a31c-be26-4f68-b2cf-ea4f73a3124e" type="SALESFORCE:CONNECTIVITY, SALESFORCE:INSUFFICIENT_PERMISSIONS, SALESFORCE:MUTUAL_AUTHENTICATION_FAILED, SALESFORCE:NOT_FOUND, SALESFORCE:OPERATION_NOT_SUPPORTED, SALESFORCE:RETRY_EXHAUSTED, SALESFORCE:UNAVAILABLE, STREAM_MAXIMUM_SIZE_EXCEEDED">
+			<ee:transform doc:name="map technical errors" doc:id="d4640266-3ca2-4f6a-9e85-041c6abfa2fa" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"errorType": "Technical Error",
+	"errorCode": error.errorType.namespace ++ ":" ++ error.errorType.identifier,
+	"errorDescription": error.description
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="ERROR" doc:name="Technical error" doc:id="50d5cb26-fabe-4fc0-af83-0d6c28ebf5e7" message="Technical error: #[payload]"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1c560f35-e804-4085-9056-90d72326ae6e" type="SALESFORCE:INVALID_INPUT, SALESFORCE:INVALID_RESPONSE, SALESFORCE:LIMIT_EXCEEDED, EXPRESSION">
+			<ee:transform doc:name="map functional errors" doc:id="1a09056e-5b43-41f4-bc0f-133a807b9805" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"errorType": "Functional Error",
+	"errorCode": error.errorType.namespace ++ ":" ++ error.errorType.identifier,
+	"errorDescription": error.description
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="ERROR" doc:name="Functional error" doc:id="612f4199-b1a8-4c3d-8c41-fbc7c7beb9b1" message="Functional error: #[payload]" />
+		</on-error-propagate>
+	</error-handler>
+</mule>

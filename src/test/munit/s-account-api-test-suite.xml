@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="s-account-api-test-suite.xml" />
+	<munit:test name="s-account-api-test-suite-post:\accounts:application\json:s-account-api-configTest" doc:id="ebbd3f73-9e1e-49c0-9cfc-c82f9782c940" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bc22b073-8707-4faf-9805-748d0b1ffe8d" processor="salesforce:create">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Create" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="a1bbe046-3b39-47f8-9409-a92e47cd96b9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('postAccountCreateResponse.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="25f2f4fc-7aae-4069-be0e-14b2dab8c57c" >
+				<munit:payload value="#[MunitTools::getResourceAsString('postAccountCreate.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\accounts:application\json:s-account-api-config" doc:id="e01cc8ce-acc3-48c6-b8e5-f0a0b46f913d" name="post:\accounts:application\json:s-account-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="75b15f05-7896-4ef0-9f6d-184518553abd" expression="#[payload.items.id[0]]" is="#[MunitTools::equalTo('001dN00000nS5QPQA0')]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-account-api-test-suite-post:\accounts:application\json:s-account-api-configTest_technical-error" doc:id="e06029eb-9e67-4e87-92ba-0c8a2d46b1aa" description="Test" expectedErrorType="SALESFORCE:CONNECTIVITY">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="7e85afc3-f7f4-465c-947c-d7fbd03b87db" processor="salesforce:create" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Create" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="a1bbe046-3b39-47f8-9409-a92e47cd96b9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('postAccountCreateResponse.json')]" mediaType="application/json" />
+					<munit-tools:error typeId="SALESFORCE:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="6ad83f42-c97b-465e-9b63-cbb194f6da5b" >
+				<munit:payload value="#[MunitTools::getResourceAsString('postAccountCreate.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\accounts:application\json:s-account-api-config" doc:id="05850192-c200-4567-b9f5-84958d5bbafb" name="post:\accounts:application\json:s-account-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="verify technical error" doc:id="fc39b369-6e87-4fad-9796-9e09c79e101a" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Technical error" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="s-account-api-test-suite-post:\accounts:application\json:s-account-api-configTest_functional-error" doc:id="c012b0ca-d45d-4631-ae96-a303cc707914" description="Test" expectedErrorType="SALESFORCE:INVALID_INPUT">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="720cbd68-c8b1-49fd-a8ef-68cbece11ba2" processor="salesforce:create" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Create" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="a1bbe046-3b39-47f8-9409-a92e47cd96b9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('postAccountCreateResponse.json')]" mediaType="application/json" />
+					<munit-tools:error typeId="SALESFORCE:INVALID_INPUT" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="48915fb3-d6cd-4f28-9fec-b768b902f9d4" >
+				<munit:payload value="#[MunitTools::getResourceAsString('postAccountCreate.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\accounts:application\json:s-account-api-config" doc:id="c7132975-4ffe-407f-9fc0-1bd12e44a0f8" name="post:\accounts:application\json:s-account-api-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="verify functional error" doc:id="5a1420a1-f486-4f56-9d43-7f31748fff86" processor="logger" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Functional error" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

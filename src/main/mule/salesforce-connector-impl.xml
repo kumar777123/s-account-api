@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<sub-flow name="salesforce-connector-impl" doc:id="f65b13bd-cb8d-4ba5-84d0-81bf178f1acb" >
+		<salesforce:create doc:name="Create" doc:id="a1bbe046-3b39-47f8-9409-a92e47cd96b9" config-ref="Salesforce_Config" type="Account" />
+	</sub-flow>
+</mule>
