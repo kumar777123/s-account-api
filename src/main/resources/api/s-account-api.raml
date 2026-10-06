@@ -1,0 +1,24 @@
+#%RAML 1.0
+title: s-account-api
+description: This is system api to send data to the salesforce Accounts
+
+protocols: [HTTP, HTTPS]
+
+uses:
+  sf-lib: /library/sf-library.raml
+
+securitySchemes:
+  oauth_2_0: !include /exchange_modules/92387bf2-2044-4937-a1b3-8cf42b7952b9/oauth2-security-scheme/1.0.0/oauth2-security-scheme.raml
+
+/accounts:
+  securedBy: oauth_2_0
+  post:
+    body:
+      application/json:
+        type: sf-lib.postAccountCreate
+        example: !include /examples/request/postAccountCreate.json
+    responses:
+      201:
+        body:
+          applicaion/json:
+
